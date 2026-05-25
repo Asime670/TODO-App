@@ -137,13 +137,13 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen px-4 py-6 text-slate-50 lg:px-8">
+    <div className="font-sans min-h-screen px-4 py-6 text-slate-50 lg:px-8">
       <div className="mx-auto flex max-w-7xl gap-6">
         <aside className="hidden w-72 shrink-0 lg:block">
           <div className="sticky top-6 flex flex-col gap-4">
             <div>
               <p className="text-sm text-cyan-200">TaskFlow</p>
-              <h1 className="mt-2 text-2xl font-bold">Dashboard</h1>
+              <h1 className="font-display mt-2 text-2xl">Dashboard</h1>
               <p className="mt-2 text-sm text-slate-200">Welcome back, {user?.name || 'there'}.</p>
             </div>
 
@@ -167,7 +167,7 @@ export default function Dashboard() {
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div>
                 <p className="text-sm text-cyan-200">Focus dashboard</p>
-                <h2 className="text-3xl font-bold">Stay ahead of every deadline</h2>
+                <h2 className="font-display text-3xl">Stay ahead of every deadline</h2>
               </div>
               <button onClick={() => setShowCreate(true)} className="rounded-full bg-cyan-500 px-4 py-2 font-semibold text-slate-950">
                 + New task

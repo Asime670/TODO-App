@@ -20,6 +20,8 @@ body {
   margin: 0;
   min-height: 100vh;
   font-family: 'DM Sans', sans-serif;
+  font-weight: 400;
+  line-height: 1.5;
   color: var(--fg);
   background:
     radial-gradient(circle at top left, rgba(0, 229, 200, 0.18), transparent 18%),
@@ -43,6 +45,55 @@ body.light {
 
 * {
   box-sizing: border-box;
+}
+
+@layer components {
+  .font-display {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+  }
+
+  .font-sans {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+  }
+
+  .nav-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 0.9rem;
+    border-radius: 999px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    color: var(--muted);
+    transition: color 180ms ease, background-color 180ms ease;
+  }
+
+  .nav-link:hover {
+    color: var(--fg);
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  .nav-link--cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.65rem 1rem;
+    border-radius: 999px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    color: #031017;
+    background: linear-gradient(135deg, var(--accent), #7dfff5);
+    box-shadow: 0 12px 28px rgba(0, 229, 200, 0.22);
+    transition: transform 180ms ease, filter 180ms ease;
+  }
+
+  .nav-link--cta:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.02);
+  }
 }
 
 body.light .glass-card,

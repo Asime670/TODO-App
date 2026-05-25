@@ -31,27 +31,24 @@ export default function Landing() {
       <nav className="sticky top-4 z-30 mx-auto max-w-6xl">
         <div className="glass-card flex flex-wrap items-center justify-between gap-4 rounded-full px-4 py-3 sm:px-5">
           <div>
-            <p
-              className="text-[0.72rem] uppercase tracking-[0.35em] text-[var(--accent)]"
-              style={{ fontFamily: 'DM Sans, sans-serif' }}
-            >
+            <p className="font-sans text-[0.72rem] uppercase tracking-[0.35em] text-[var(--accent)]">
               TaskFlow
             </p>
-            <p className="text-sm text-[var(--muted)]">Plan clearly. Ship confidently.</p>
+            <p className="font-sans text-sm text-[var(--muted)]">Plan clearly. Ship confidently.</p>
           </div>
 
-          <div className="flex items-center gap-3">
-            <Link to="/login" className="btn-ghost rounded-full px-4 py-2 text-sm">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <Link to="/login" className="nav-link text-sm">
               Login
             </Link>
-            <Link to="/register" className="btn-primary rounded-full px-4 py-2 text-sm font-semibold text-[#031017]">
+            <Link to="/register" className="nav-link--cta text-sm">
               Start free
             </Link>
           </div>
         </div>
       </nav>
 
-      <main className="mx-auto flex max-w-6xl flex-col gap-8 pb-8 pt-6 sm:pt-8">
+      <main className="font-sans mx-auto flex max-w-6xl flex-col gap-8 pb-8 pt-6 sm:pt-8">
         <section className="grid items-center gap-8 lg:grid-cols-[1.05fr_0.95fr]">
           <div>
             <motion.div
@@ -64,16 +61,14 @@ export default function Landing() {
 
             <motion.h1
               {...fadeUp(0.12)}
-              className="mt-5 text-[clamp(2.8rem,5vw,4.3rem)] leading-[0.95]"
-              style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800 }}
+              className="font-display mt-5 text-[clamp(2.8rem,5vw,4.3rem)] leading-[0.95]"
             >
               Organize work with <span className="text-[var(--accent)]">clarity</span>.
             </motion.h1>
 
             <motion.p
               {...fadeUp(0.24)}
-              className="mt-4 max-w-2xl text-base leading-7 text-[var(--muted)] sm:text-lg"
-              style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 300 }}
+              className="mt-4 max-w-2xl text-base font-light leading-7 text-[var(--muted)] sm:text-lg"
             >
               TaskFlow gives you a calm space to capture priorities, keep deadlines visible, and move your projects from planning to completion without the noise.
             </motion.p>
