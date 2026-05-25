@@ -1,31 +1,21 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import api from '../api/axios'
 import TaskForm from '../components/TaskForm'
+import { deleteStoredTask, getStoredTask, updateStoredTask } from '../lib/taskStorage'
 
 export default function TaskDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const [task, setTask] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [task, setTask] = useState(() => getStoredTask(id))
+  const [loading, setLoading] = useState(!getStoredTask(id))
   const [message, setMessage] = useState('')
   const [isEditing, setIsEditing] = useState(false)
 
-  const loadTask = async () => {
-    try {
-      setLoading(true)
-      const { data } = await api.get(`/tasks/${id}`)
-      setTask(data.task)
-    } catch (error) {
-      setMessage(error.response?.data?.message || 'Unable to load task')
-    } finally {
-      setLoading(false)
-    }
-  }
-
   useEffect(() => {
-    loadTask()
+    const nextTask = getStoredTask(id)
+    setTask(nextTask)
+    setLoading(false)
   }, [id])
 
   const remaining = useMemo(() => {
@@ -40,33 +30,25 @@ export default function TaskDetail() {
     return `${days}d ${hours}h ${minutes}m ${seconds}s`
   }, [task])
 
-  const handleUpdate = async (payload) => {
-    try {
-      await api.put(`/tasks/${id}`, payload)
-      setIsEditing(false)
-      await loadTask()
-      setMessage('Task updated successfully')
-    } catch (error) {
-      setMessage(error.response?.data?.message || 'Unable to update task')
-    }
+  const handleUpdate = (payload) => {
+    const updatedTask = updateStoredTask(id, payload)
+    setTask(updatedTask)
+    setIsEditing(false)
+    setMessage('Task updated successfully')
   }
 
-  const handleDelete = async () => {
-    try {
-      await api.delete(`/tasks/${id}`)
-      navigate('/dashboard')
-    } catch (error) {
-      setMessage(error.response?.data?.message || 'Unable to delete task')
-    }
+  const handleDelete = () => {
+    deleteStoredTask(id)
+    navigate('/dashboard')
   }
 
-  const handleToggle = async () => {
-    try {
-      await api.put(`/tasks/${id}`, { completed: !task.completed })
-      await loadTask()
-    } catch (error) {
-      setMessage(error.response?.data?.message || 'Unable to update task')
+  const handleToggle = () => {
+    if (!task) {
+      return
     }
+
+    const updatedTask = updateStoredTask(id, { completed: !task.completed })
+    setTask(updatedTask)
   }
 
   if (loading) {

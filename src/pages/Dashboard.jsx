@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import TaskCard from '../components/TaskCard'
 import TaskForm from '../components/TaskForm'
-import api from '../api/axios'
+import { addTask, deleteStoredTask, getTasks, saveTasks, updateStoredTask } from '../lib/taskStorage'
 import { useAuth } from '../contexts/AuthContext'
 
 const statCards = [
@@ -33,8 +33,7 @@ function buildCalendarDays(referenceDate) {
 export default function Dashboard() {
   const navigate = useNavigate()
   const { user, logout } = useAuth()
-  const [tasks, setTasks] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [tasks, setTasks] = useState(() => getTasks())
   const [search, setSearch] = useState('')
   const [priorityFilter, setPriorityFilter] = useState('all')
   const [categoryFilter, setCategoryFilter] = useState('all')
@@ -47,29 +46,9 @@ export default function Dashboard() {
   const [message, setMessage] = useState('')
   const triggeredAlarms = useRef(new Set())
 
-  const loadTasks = async () => {
-    try {
-      setLoading(true)
-      const { data } = await api.get('/tasks', {
-        params: {
-          search,
-          priority: priorityFilter,
-          category: categoryFilter,
-          status: statusFilter
-        }
-      })
-
-      setTasks(data.tasks)
-    } catch (error) {
-      setMessage(error.response?.data?.message || 'Unable to load tasks')
-    } finally {
-      setLoading(false)
-    }
-  }
-
   useEffect(() => {
-    loadTasks()
-  }, [search, priorityFilter, categoryFilter, statusFilter])
+    saveTasks(tasks)
+  }, [tasks])
 
   useEffect(() => {
     const interval = window.setInterval(() => setNow(Date.now()), 1000)
@@ -113,6 +92,17 @@ export default function Dashboard() {
 
   const categories = useMemo(() => ['all', ...new Set(tasks.map((task) => task.category))], [tasks])
 
+  const filteredTasks = useMemo(() => {
+    return tasks.filter((task) => {
+      const matchesSearch = `${task.title} ${task.description}`.toLowerCase().includes(search.toLowerCase())
+      const matchesPriority = priorityFilter === 'all' || task.priority === priorityFilter
+      const matchesCategory = categoryFilter === 'all' || task.category === categoryFilter
+      const matchesStatus = statusFilter === 'all' || (statusFilter === 'completed' ? task.completed : !task.completed)
+
+      return matchesSearch && matchesPriority && matchesCategory && matchesStatus
+    })
+  }, [tasks, search, priorityFilter, categoryFilter, statusFilter])
+
   const stats = useMemo(() => {
     const total = tasks.length
     const completed = tasks.filter((task) => task.completed).length
@@ -124,33 +114,21 @@ export default function Dashboard() {
 
   const calendarDays = useMemo(() => buildCalendarDays(new Date()), [])
 
-  const handleCreate = async (payload) => {
-    try {
-      await api.post('/tasks', payload)
-      setShowCreate(false)
-      await loadTasks()
-      setMessage('Task created successfully')
-    } catch (error) {
-      setMessage(error.response?.data?.message || 'Unable to create task')
-    }
+  const handleCreate = (payload) => {
+    addTask(payload)
+    setTasks(getTasks())
+    setShowCreate(false)
+    setMessage('Task created successfully')
   }
 
-  const handleToggle = async (task) => {
-    try {
-      await api.put(`/tasks/${task._id}`, { completed: !task.completed })
-      await loadTasks()
-    } catch (error) {
-      setMessage(error.response?.data?.message || 'Unable to update task')
-    }
+  const handleToggle = (task) => {
+    updateStoredTask(task._id, { completed: !task.completed })
+    setTasks(getTasks())
   }
 
-  const handleDelete = async (task) => {
-    try {
-      await api.delete(`/tasks/${task._id}`)
-      await loadTasks()
-    } catch (error) {
-      setMessage(error.response?.data?.message || 'Unable to delete task')
-    }
+  const handleDelete = (task) => {
+    deleteStoredTask(task._id)
+    setTasks(getTasks())
   }
 
   const handleLogout = async () => {
@@ -239,15 +217,13 @@ export default function Dashboard() {
 
             {message && <p className="mt-4 rounded-xl bg-cyan-500/10 px-3 py-2 text-sm text-cyan-100">{message}</p>}
 
-            {loading ? (
-              <div className="mt-4 text-slate-200">Loading tasks...</div>
-            ) : view === 'calendar' ? (
+            {view === 'calendar' ? (
               <div className="mt-6 grid gap-3 md:grid-cols-7">
                 {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => (
                   <div key={day} className="text-center text-sm font-semibold text-cyan-100">{day}</div>
                 ))}
                 {calendarDays.map((day, index) => {
-                  const dayTasks = day ? tasks.filter((task) => new Date(task.deadline).toDateString() === day.toDateString()) : []
+                  const dayTasks = day ? filteredTasks.filter((task) => new Date(task.deadline).toDateString() === day.toDateString()) : []
                   return (
                     <div key={index} className="min-h-28 rounded-2xl border border-white/10 bg-slate-950/30 p-2">
                       {day && (
@@ -266,7 +242,7 @@ export default function Dashboard() {
               </div>
             ) : (
               <div className="mt-6 grid gap-4 xl:grid-cols-2">
-                {tasks.map((task) => (
+                {filteredTasks.map((task) => (
                   <TaskCard
                     key={task._id}
                     task={task}
@@ -276,7 +252,7 @@ export default function Dashboard() {
                     onOpen={(selected) => navigate(`/tasks/${selected._id}`)}
                   />
                 ))}
-                {!tasks.length && <div className="rounded-2xl border border-dashed border-white/10 p-8 text-slate-200">No tasks yet. Create your first task to get started.</div>}
+                {!filteredTasks.length && <div className="rounded-2xl border border-dashed border-white/10 p-8 text-slate-200">No tasks yet. Create your first task to get started.</div>}
               </div>
             )}
           </div>

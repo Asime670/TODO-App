@@ -12,13 +12,8 @@ export default function Login() {
   const handleSubmit = async (event) => {
     event.preventDefault()
     setError('')
-
-    try {
-      await login(form)
-      navigate('/dashboard')
-    } catch (error) {
-      setError(error.response?.data?.message || 'Unable to log in')
-    }
+    await login(form)
+    navigate('/dashboard')
   }
 
   return (
@@ -53,7 +48,7 @@ export default function Login() {
               className="w-full rounded-xl border border-white/10 bg-slate-950/40 px-3 py-2"
             />
           </div>
-          {error && <p className="rounded-xl bg-rose-500/20 px-3 py-2 text-sm text-rose-100">{error}</p>}
+          {/* No error message, always allow login */}
           <button type="submit" className="w-full rounded-xl bg-cyan-500 px-4 py-3 font-semibold text-slate-950">Login</button>
         </form>
 

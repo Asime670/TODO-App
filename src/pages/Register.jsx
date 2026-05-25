@@ -12,13 +12,8 @@ export default function Register() {
   const handleSubmit = async (event) => {
     event.preventDefault()
     setError('')
-
-    try {
-      await register(form)
-      navigate('/dashboard')
-    } catch (error) {
-      setError(error.response?.data?.message || 'Unable to register')
-    }
+    await register(form)
+    navigate('/dashboard')
   }
 
   return (
@@ -63,7 +58,7 @@ export default function Register() {
               className="w-full rounded-xl border border-white/10 bg-slate-950/40 px-3 py-2"
             />
           </div>
-          {error && <p className="rounded-xl bg-rose-500/20 px-3 py-2 text-sm text-rose-100">{error}</p>}
+          {/* No error message, always allow register */}
           <button type="submit" className="w-full rounded-xl bg-cyan-500 px-4 py-3 font-semibold text-slate-950">Register</button>
         </form>
 

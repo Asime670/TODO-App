@@ -54,7 +54,7 @@ function ThemeToggleButton() {
     <motion.button
       whileTap={{ scale: 0.96 }}
       onClick={toggleTheme}
-      className="fixed bottom-4 right-4 z-50 rounded-full bg-cyan-500 px-4 py-2 text-sm font-semibold text-slate-950 shadow-lg"
+      className="fixed bottom-4 right-4 z-50 rounded-full border border-[var(--glass-border)] bg-[var(--glass)] px-4 py-2 text-sm font-semibold text-[var(--fg)] shadow-lg backdrop-blur"
     >
       {theme === 'dark' ? '☀️ Light' : '🌙 Dark'}
     </motion.button>

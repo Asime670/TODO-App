@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
 import { useAuth } from '../contexts/AuthContext'
+import { useTheme } from '../contexts/ThemeContext'
 
 export default function ProfileSettings() {
   const navigate = useNavigate()
   const { user, updateProfile } = useAuth()
+  const { setTheme } = useTheme()
   const [form, setForm] = useState({ name: '', email: '', password: '', theme: user?.theme || 'dark' })
   const [message, setMessage] = useState('')
 
@@ -21,11 +22,15 @@ export default function ProfileSettings() {
 
     try {
       const payload = { name: form.name, email: form.email, theme: form.theme }
-      if (form.password) payload.password = form.password
+      if (form.password) {
+        payload.password = form.password
+      }
+
       await updateProfile(payload)
+      setTheme(form.theme)
       setMessage('Profile updated successfully')
     } catch (error) {
-      setMessage(error.response?.data?.message || 'Unable to update profile')
+      setMessage(error?.message || 'Unable to update profile')
     }
   }
 
