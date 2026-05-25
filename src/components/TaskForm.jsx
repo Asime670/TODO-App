@@ -22,12 +22,26 @@ const initialState = {
   deadline: ''
 }
 
-export default function TaskForm({ initialData = {}, onSubmit, submitLabel = 'Create Task', onCancel }) {
-  const [form, setForm] = useState({ ...initialState, ...initialData, deadline: formatForInput(initialData.deadline) })
+function getFormState(initialData = {}) {
+  return {
+    ...initialState,
+    ...initialData,
+    deadline: formatForInput(initialData?.deadline)
+  }
+}
+
+export default function TaskForm({ initialData = null, onSubmit, submitLabel = 'Create Task', onCancel }) {
+  const [form, setForm] = useState(() => getFormState(initialData))
 
   useEffect(() => {
-    setForm({ ...initialState, ...initialData, deadline: formatForInput(initialData.deadline) })
-  }, [initialData])
+    setForm(getFormState(initialData))
+  }, [
+    initialData?.title,
+    initialData?.description,
+    initialData?.priority,
+    initialData?.category,
+    initialData?.deadline
+  ])
 
   const handleSubmit = (event) => {
     event.preventDefault()

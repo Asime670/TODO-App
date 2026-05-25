@@ -70,30 +70,49 @@ export function AuthProvider({ children }) {
   }, [user])
 
   const login = async (credentials) => {
-    // Accept any credentials, create a fake user object
-    const nextUser = {
-      id: `${Date.now()}-${Math.random()}`,
-      name: credentials.email.split('@')[0] || 'User',
-      email: credentials.email,
-      password: credentials.password,
-      theme: defaultTheme()
+    const users = readStoredUsers()
+    const existingUser = users.find((item) => item.email === credentials.email)
+
+    if (!existingUser) {
+      throw new Error('No account found for that email.')
     }
+
+    if (existingUser.password !== credentials.password) {
+      throw new Error('Incorrect password. Please try again.')
+    }
+
+    const nextUser = {
+      ...existingUser,
+      theme: existingUser.theme || defaultTheme()
+    }
+
     setUser(nextUser)
     writeStoredSession(nextUser)
+
     return { user: nextUser }
   }
 
   const register = async (payload) => {
-    // Accept any registration, create a fake user object
+    const users = readStoredUsers()
+    const existingUser = users.find((item) => item.email === payload.email)
+
+    if (existingUser) {
+      throw new Error('An account with that email already exists.')
+    }
+
     const nextUser = {
-      id: `${Date.now()}-${Math.random()}`,
+      id: crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`,
       name: payload.name,
       email: payload.email,
       password: payload.password,
       theme: payload.theme || defaultTheme()
     }
+
+    const updatedUsers = [...users, nextUser]
+    writeStoredUsers(updatedUsers)
     setUser(nextUser)
     writeStoredSession(nextUser)
+
     return { user: nextUser }
   }
 

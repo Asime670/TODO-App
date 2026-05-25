@@ -139,24 +139,26 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen px-4 py-6 text-slate-50 lg:px-8">
       <div className="mx-auto flex max-w-7xl gap-6">
-        <aside className="hidden w-72 shrink-0 rounded-[2rem] border border-white/10 bg-white/10 p-5 backdrop-blur lg:block">
-          <div>
-            <p className="text-sm text-cyan-200">TaskFlow</p>
-            <h1 className="mt-2 text-2xl font-bold">Dashboard</h1>
-            <p className="mt-2 text-sm text-slate-200">Welcome back, {user?.name || 'there'}.</p>
-          </div>
+        <aside className="hidden w-72 shrink-0 lg:block">
+          <div className="sticky top-6 flex flex-col gap-4">
+            <div>
+              <p className="text-sm text-cyan-200">TaskFlow</p>
+              <h1 className="mt-2 text-2xl font-bold">Dashboard</h1>
+              <p className="mt-2 text-sm text-slate-200">Welcome back, {user?.name || 'there'}.</p>
+            </div>
 
-          <div className="mt-6 grid gap-3">
-            <button onClick={() => setView('board')} className="rounded-xl bg-cyan-500 px-4 py-3 text-left font-semibold text-slate-950">Overview</button>
-            <button onClick={() => setView('calendar')} className="rounded-xl border border-white/10 px-4 py-3 text-left">Calendar</button>
-            <button onClick={() => navigate('/profile')} className="rounded-xl border border-white/10 px-4 py-3 text-left">Profile</button>
-            <button onClick={handleLogout} className="rounded-xl border border-rose-400/50 px-4 py-3 text-left text-rose-100">Logout</button>
-          </div>
+            <div className="grid gap-3">
+              <button onClick={() => setView('board')} className="rounded-xl bg-cyan-500 px-4 py-3 text-left font-semibold text-slate-950">Overview</button>
+              <button onClick={() => setView('calendar')} className="rounded-xl border border-white/10 px-4 py-3 text-left">Calendar</button>
+              <button onClick={() => navigate('/profile')} className="rounded-xl border border-white/10 px-4 py-3 text-left">Profile</button>
+              <button onClick={handleLogout} className="rounded-xl border border-rose-400/50 px-4 py-3 text-left text-rose-100">Logout</button>
+            </div>
 
-          <div className="mt-8 rounded-2xl border border-white/10 bg-slate-950/50 p-4">
-            <p className="text-sm text-slate-200">Current focus</p>
-            <p className="mt-2 text-lg font-semibold">{stats.pending} pending tasks</p>
-            <p className="mt-1 text-sm text-slate-200">{stats.overdue} overdue items need attention.</p>
+            <div className="border-t border-white/10 pt-4">
+              <p className="text-sm text-slate-200">Current focus</p>
+              <p className="mt-2 text-lg font-semibold">{stats.pending} pending tasks</p>
+              <p className="mt-1 text-sm text-slate-200">{stats.overdue} overdue items need attention.</p>
+            </div>
           </div>
         </aside>
 
