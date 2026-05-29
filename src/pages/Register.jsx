@@ -5,15 +5,25 @@ import { useAuth } from '../contexts/AuthContext'
 
 export default function Register() {
   const navigate = useNavigate()
-  const { register } = useAuth()
+  const { register, loading } = useAuth()
   const [form, setForm] = useState({ name: '', email: '', password: '' })
   const [error, setError] = useState('')
 
   const handleSubmit = async (event) => {
     event.preventDefault()
     setError('')
-    await register(form)
-    navigate('/dashboard')
+
+    console.info('[UI] Register form submitted', { email: form.email })
+
+    try {
+      await register(form)
+      console.info('[UI] Register success, redirecting to dashboard', { email: form.email })
+      navigate('/dashboard')
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unable to create an account. Please try again.'
+      setError(message)
+      console.error('[UI] Register failed', { email: form.email, message })
+    }
   }
 
   return (
@@ -25,7 +35,7 @@ export default function Register() {
       >
         <p className="text-sm text-cyan-200">Start organizing</p>
         <h1 className="mt-2 text-3xl font-bold">Create your TaskFlow account</h1>
-        <p className="mt-2 text-sm text-slate-200">Secure JWT auth, automatic reminders, and a real-time dashboard are waiting for you.</p>
+        <p className="mt-2 text-sm text-slate-200">Secure your workspace, keep tasks moving, and get back to planning fast.</p>
 
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
           <div>
@@ -33,6 +43,7 @@ export default function Register() {
             <input
               type="text"
               required
+              autoComplete="name"
               value={form.name}
               onChange={(event) => setForm({ ...form, name: event.target.value })}
               className="w-full rounded-xl border border-white/10 bg-slate-950/40 px-3 py-2"
@@ -43,6 +54,7 @@ export default function Register() {
             <input
               type="email"
               required
+              autoComplete="email"
               value={form.email}
               onChange={(event) => setForm({ ...form, email: event.target.value })}
               className="w-full rounded-xl border border-white/10 bg-slate-950/40 px-3 py-2"
@@ -53,13 +65,26 @@ export default function Register() {
             <input
               type="password"
               required
+              autoComplete="new-password"
               value={form.password}
               onChange={(event) => setForm({ ...form, password: event.target.value })}
               className="w-full rounded-xl border border-white/10 bg-slate-950/40 px-3 py-2"
             />
           </div>
-          {/* No error message, always allow register */}
-          <button type="submit" className="w-full rounded-xl bg-cyan-500 px-4 py-3 font-semibold text-slate-950">Register</button>
+
+          {error ? (
+            <p role="alert" className="rounded-xl border border-rose-400/40 bg-rose-500/10 px-3 py-2 text-sm text-rose-100">
+              {error}
+            </p>
+          ) : null}
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full rounded-xl bg-cyan-500 px-4 py-3 font-semibold text-slate-950 disabled:cursor-not-allowed disabled:opacity-70"
+          >
+            {loading ? 'Creating account…' : 'Register'}
+          </button>
         </form>
 
         <p className="mt-4 text-sm text-slate-200">

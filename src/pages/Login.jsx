@@ -5,15 +5,25 @@ import { useAuth } from '../contexts/AuthContext'
 
 export default function Login() {
   const navigate = useNavigate()
-  const { login } = useAuth()
+  const { login, loading } = useAuth()
   const [form, setForm] = useState({ email: '', password: '' })
   const [error, setError] = useState('')
 
   const handleSubmit = async (event) => {
     event.preventDefault()
     setError('')
-    await login(form)
-    navigate('/dashboard')
+
+    console.info('[UI] Login form submitted', { email: form.email })
+
+    try {
+      await login(form)
+      console.info('[UI] Login success, redirecting to dashboard', { email: form.email })
+      navigate('/dashboard')
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unable to sign in. Please try again.'
+      setError(message)
+      console.error('[UI] Login failed', { email: form.email, message })
+    }
   }
 
   return (
@@ -33,6 +43,7 @@ export default function Login() {
             <input
               type="email"
               required
+              autoComplete="email"
               value={form.email}
               onChange={(event) => setForm({ ...form, email: event.target.value })}
               className="w-full rounded-xl border border-white/10 bg-slate-950/40 px-3 py-2"
@@ -43,13 +54,26 @@ export default function Login() {
             <input
               type="password"
               required
+              autoComplete="current-password"
               value={form.password}
               onChange={(event) => setForm({ ...form, password: event.target.value })}
               className="w-full rounded-xl border border-white/10 bg-slate-950/40 px-3 py-2"
             />
           </div>
-          {/* No error message, always allow login */}
-          <button type="submit" className="w-full rounded-xl bg-cyan-500 px-4 py-3 font-semibold text-slate-950">Login</button>
+
+          {error ? (
+            <p role="alert" className="rounded-xl border border-rose-400/40 bg-rose-500/10 px-3 py-2 text-sm text-rose-100">
+              {error}
+            </p>
+          ) : null}
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full rounded-xl bg-cyan-500 px-4 py-3 font-semibold text-slate-950 disabled:cursor-not-allowed disabled:opacity-70"
+          >
+            {loading ? 'Signing in…' : 'Login'}
+          </button>
         </form>
 
         <p className="mt-4 text-sm text-slate-200">

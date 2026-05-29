@@ -70,53 +70,78 @@ export function AuthProvider({ children }) {
   }, [user])
 
   const login = async (credentials) => {
-    const users = readStoredUsers()
-    const existingUser = users.find((item) => item.email === credentials.email)
+    setLoading(true)
+    console.info('[Auth] login attempt', { email: credentials.email })
 
-    if (!existingUser) {
-      throw new Error('No account found for that email.')
+    try {
+      const users = readStoredUsers()
+      const existingUser = users.find((item) => item.email === credentials.email)
+
+      if (!existingUser) {
+        throw new Error('No account found for that email.')
+      }
+
+      if (existingUser.password !== credentials.password) {
+        throw new Error('Incorrect password. Please try again.')
+      }
+
+      const nextUser = {
+        ...existingUser,
+        theme: existingUser.theme || defaultTheme()
+      }
+
+      setUser(nextUser)
+      writeStoredSession(nextUser)
+      console.info('[Auth] login success', { email: nextUser.email })
+
+      return { user: nextUser }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unable to sign in. Please try again.'
+      console.error('[Auth] login failed', { email: credentials.email, message })
+      throw error
+    } finally {
+      setLoading(false)
     }
-
-    if (existingUser.password !== credentials.password) {
-      throw new Error('Incorrect password. Please try again.')
-    }
-
-    const nextUser = {
-      ...existingUser,
-      theme: existingUser.theme || defaultTheme()
-    }
-
-    setUser(nextUser)
-    writeStoredSession(nextUser)
-
-    return { user: nextUser }
   }
 
   const register = async (payload) => {
-    const users = readStoredUsers()
-    const existingUser = users.find((item) => item.email === payload.email)
+    setLoading(true)
+    console.info('[Auth] register attempt', { email: payload.email })
 
-    if (existingUser) {
-      throw new Error('An account with that email already exists.')
+    try {
+      const users = readStoredUsers()
+      const existingUser = users.find((item) => item.email === payload.email)
+
+      if (existingUser) {
+        throw new Error('An account with that email already exists.')
+      }
+
+      const nextUser = {
+        id: crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`,
+        name: payload.name,
+        email: payload.email,
+        password: payload.password,
+        theme: payload.theme || defaultTheme()
+      }
+
+      const updatedUsers = [...users, nextUser]
+      writeStoredUsers(updatedUsers)
+      setUser(nextUser)
+      writeStoredSession(nextUser)
+      console.info('[Auth] register success', { email: nextUser.email })
+
+      return { user: nextUser }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unable to create an account. Please try again.'
+      console.error('[Auth] register failed', { email: payload.email, message })
+      throw error
+    } finally {
+      setLoading(false)
     }
-
-    const nextUser = {
-      id: crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`,
-      name: payload.name,
-      email: payload.email,
-      password: payload.password,
-      theme: payload.theme || defaultTheme()
-    }
-
-    const updatedUsers = [...users, nextUser]
-    writeStoredUsers(updatedUsers)
-    setUser(nextUser)
-    writeStoredSession(nextUser)
-
-    return { user: nextUser }
   }
 
   const logout = async () => {
+    console.info('[Auth] logout', { email: user?.email })
     setUser(null)
     clearStoredSession()
   }
@@ -155,6 +180,7 @@ export function AuthProvider({ children }) {
 
   const refreshUser = () => {
     const sessionUser = readStoredSession()
+    console.info('[Auth] refresh user', { hasSession: Boolean(sessionUser) })
     setUser(sessionUser)
   }
 

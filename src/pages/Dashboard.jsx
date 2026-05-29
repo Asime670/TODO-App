@@ -137,83 +137,83 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="font-sans min-h-screen px-4 py-6 text-slate-50 lg:px-8">
-      <div className="mx-auto flex max-w-7xl gap-6">
-        <aside className="hidden w-72 shrink-0 lg:block">
-          <div className="sticky top-6 flex flex-col gap-4">
+    <div className="font-outfit min-h-screen px-4 py-6 text-slate-50 lg:px-8">
+      <div className="mx-auto flex max-w-7xl gap-4">
+        <aside className="hidden w-48 shrink-0 lg:block">
+          <div className="sticky top-6 flex flex-col gap-3">
             <div>
-              <p className="text-sm text-cyan-200">TaskFlow</p>
-              <h1 className="font-display mt-2 text-2xl">Dashboard</h1>
-              <p className="mt-2 text-sm text-slate-200">Welcome back, {user?.name || 'there'}.</p>
+              <p className="font-outfit text-xs text-cyan-200">TaskFlow</p>
+              <h1 className="font-satoshi mt-1 text-xl font-semibold">Dashboard</h1>
+              <p className="font-outfit mt-1 text-xs text-slate-200">Welcome back, {user?.name || 'there'}.</p>
             </div>
 
-            <div className="grid gap-3">
-              <button onClick={() => setView('board')} className="rounded-xl bg-cyan-500 px-4 py-3 text-left font-semibold text-slate-950">Overview</button>
-              <button onClick={() => setView('calendar')} className="rounded-xl border border-white/10 px-4 py-3 text-left">Calendar</button>
-              <button onClick={() => navigate('/profile')} className="rounded-xl border border-white/10 px-4 py-3 text-left">Profile</button>
-              <button onClick={handleLogout} className="rounded-xl border border-rose-400/50 px-4 py-3 text-left text-rose-100">Logout</button>
+            <div className="grid gap-2">
+              <button onClick={() => setView('board')} className="font-satoshi rounded-lg bg-cyan-500 px-3 py-2 text-left text-sm font-semibold text-slate-950">Overview</button>
+              <button onClick={() => setView('calendar')} className="font-outfit rounded-lg border border-white/10 px-3 py-2 text-left text-sm">Calendar</button>
+              <button onClick={() => navigate('/profile')} className="font-outfit rounded-lg border border-white/10 px-3 py-2 text-left text-sm">Profile</button>
+              <button onClick={handleLogout} className="font-outfit rounded-lg border border-rose-400/50 px-3 py-2 text-left text-sm text-rose-100">Logout</button>
             </div>
 
-            <div className="border-t border-white/10 pt-4">
-              <p className="text-sm text-slate-200">Current focus</p>
-              <p className="mt-2 text-lg font-semibold">{stats.pending} pending tasks</p>
-              <p className="mt-1 text-sm text-slate-200">{stats.overdue} overdue items need attention.</p>
+            <div className="border-t border-white/10 pt-3">
+              <p className="font-outfit text-xs text-slate-200">Current focus</p>
+              <p className="font-satoshi mt-1 text-base font-semibold">{stats.pending} pending tasks</p>
+              <p className="font-outfit mt-0.5 text-xs text-slate-200">{stats.overdue} overdue items.</p>
             </div>
           </div>
         </aside>
 
-        <main className="flex-1 space-y-6">
-          <div className="rounded-[2rem] border border-white/10 bg-white/10 p-5 backdrop-blur">
-            <div className="flex flex-wrap items-center justify-between gap-4">
+        <main className="flex-1 space-y-4">
+          <div className="rounded-2xl border border-white/10 bg-white/10 p-4 backdrop-blur">
+            <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <p className="text-sm text-cyan-200">Focus dashboard</p>
-                <h2 className="font-display text-3xl">Stay ahead of every deadline</h2>
+                <p className="font-outfit text-xs text-cyan-200">Focus dashboard</p>
+                <h2 className="font-satoshi text-2xl font-semibold">Stay ahead of every deadline</h2>
               </div>
-              <button onClick={() => setShowCreate(true)} className="rounded-full bg-cyan-500 px-4 py-2 font-semibold text-slate-950">
+              <button onClick={() => setShowCreate(true)} className="font-satoshi rounded-full bg-cyan-500 px-3 py-1.5 text-sm font-semibold text-slate-950">
                 + New task
               </button>
             </div>
 
-            <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            <div className="mt-4 grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
               {statCards.map((card) => (
-                <div key={card.key} className="rounded-2xl border border-white/10 bg-slate-950/50 p-4">
-                  <p className="text-sm text-slate-200">{card.label}</p>
-                  <p className="mt-2 text-2xl font-bold">{stats[card.key]}</p>
+                <div key={card.key} className="rounded-lg border border-white/10 bg-slate-950/40 p-3">
+                  <p className="font-outfit text-xs text-slate-300">{card.label}</p>
+                  <p className="font-satoshi mt-1 text-xl font-bold">{stats[card.key]}</p>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="rounded-[2rem] border border-white/10 bg-white/10 p-5 backdrop-blur">
-            <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
-              <div className="flex flex-wrap gap-3">
+          <div className="rounded-2xl border border-white/10 bg-white/10 p-4 backdrop-blur">
+            <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+              <div className="flex flex-wrap gap-2">
                 <input
                   value={search}
                   onChange={(event) => setSearch(event.target.value)}
                   placeholder="Search tasks"
-                  className="rounded-xl border border-white/10 bg-slate-950/40 px-3 py-2"
+                  className="rounded-lg border border-white/10 bg-slate-950/40 px-3 py-1.5 text-sm"
                 />
-                <select value={priorityFilter} onChange={(event) => setPriorityFilter(event.target.value)} className="rounded-xl border border-white/10 bg-slate-950/40 px-3 py-2">
+                <select value={priorityFilter} onChange={(event) => setPriorityFilter(event.target.value)} className="rounded-lg border border-white/10 bg-slate-950/40 px-3 py-1.5 text-sm">
                   <option value="all">All priorities</option>
                   <option value="low">Low</option>
                   <option value="medium">Medium</option>
                   <option value="high">High</option>
                 </select>
-                <select value={categoryFilter} onChange={(event) => setCategoryFilter(event.target.value)} className="rounded-xl border border-white/10 bg-slate-950/40 px-3 py-2">
+                <select value={categoryFilter} onChange={(event) => setCategoryFilter(event.target.value)} className="rounded-lg border border-white/10 bg-slate-950/40 px-3 py-1.5 text-sm">
                   <option value="all">All categories</option>
                   {categories.map((category) => (
                     <option key={category} value={category}>{category}</option>
                   ))}
                 </select>
-                <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)} className="rounded-xl border border-white/10 bg-slate-950/40 px-3 py-2">
+                <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)} className="rounded-lg border border-white/10 bg-slate-950/40 px-3 py-1.5 text-sm">
                   <option value="all">All statuses</option>
                   <option value="completed">Completed</option>
                   <option value="pending">Pending</option>
                 </select>
               </div>
-              <div className="flex gap-3">
-                <button onClick={() => setView('board')} className={`rounded-full px-4 py-2 ${view === 'board' ? 'bg-cyan-500 text-slate-950' : 'border border-white/10'}`}>Board</button>
-                <button onClick={() => setView('calendar')} className={`rounded-full px-4 py-2 ${view === 'calendar' ? 'bg-cyan-500 text-slate-950' : 'border border-white/10'}`}>Calendar</button>
+              <div className="flex gap-2">
+                <button onClick={() => setView('board')} className={`rounded-full px-3 py-1.5 text-sm ${view === 'board' ? 'bg-cyan-500 text-slate-950' : 'border border-white/10'}`}>Board</button>
+                <button onClick={() => setView('calendar')} className={`rounded-full px-3 py-1.5 text-sm ${view === 'calendar' ? 'bg-cyan-500 text-slate-950' : 'border border-white/10'}`}>Calendar</button>
               </div>
             </div>
 
@@ -263,10 +263,10 @@ export default function Dashboard() {
 
       {showCreate && (
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-slate-950/70 px-4">
-          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-2xl rounded-[2rem] border border-white/10 bg-slate-950 p-6">
-            <h2 className="text-2xl font-bold">Create a new task</h2>
-            <p className="mt-2 text-sm text-slate-200">Add the details and set the deadline to start tracking it.</p>
-            <div className="mt-4">
+          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-2xl rounded-2xl border border-white/10 bg-slate-950 p-5">
+            <h2 className="text-xl font-bold">Create a new task</h2>
+            <p className="mt-1 text-xs text-slate-200">Add the details and set the deadline to start tracking it.</p>
+            <div className="mt-3">
               <TaskForm
                 onSubmit={handleCreate}
                 submitLabel="Create task"
@@ -279,13 +279,13 @@ export default function Dashboard() {
 
       {alarmOpen && alarmTask && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 px-4">
-          <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-lg rounded-[2rem] border border-rose-400/40 bg-slate-950 p-6">
-            <p className="text-sm text-rose-200">Deadline reached</p>
-            <h2 className="mt-2 text-2xl font-bold">{alarmTask.title}</h2>
-            <p className="mt-3 text-sm text-slate-200">This task is now overdue. Open it to review, update, or complete it.</p>
-            <div className="mt-6 flex gap-3">
-              <button onClick={() => { setAlarmOpen(false); navigate(`/tasks/${alarmTask._id}`) }} className="rounded-full bg-rose-500 px-4 py-2 font-semibold text-white">View task</button>
-              <button onClick={() => setAlarmOpen(false)} className="rounded-full border border-white/10 px-4 py-2">Dismiss</button>
+          <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-lg rounded-2xl border border-rose-400/40 bg-slate-950 p-5">
+            <p className="text-xs text-rose-200">Deadline reached</p>
+            <h2 className="mt-1 text-xl font-bold">{alarmTask.title}</h2>
+            <p className="mt-2 text-xs text-slate-200">This task is now overdue. Open it to review, update, or complete it.</p>
+            <div className="mt-4 flex gap-2">
+              <button onClick={() => { setAlarmOpen(false); navigate(`/tasks/${alarmTask._id}`) }} className="rounded-full bg-rose-500 px-3 py-1.5 text-sm font-semibold text-white">View task</button>
+              <button onClick={() => setAlarmOpen(false)} className="rounded-full border border-white/10 px-3 py-1.5 text-sm">Dismiss</button>
             </div>
           </motion.div>
         </div>

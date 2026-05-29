@@ -3,7 +3,13 @@ export default {
   content: ['./index.html', './src/**/*.{js,jsx,ts,tsx}'],
   darkMode: 'class',
   theme: {
-    extend: {}
+    extend: {
+      fontFamily: {
+        satoshi: ['Satoshi', 'sans-serif'],
+        outfit: ['Outfit', 'sans-serif'],
+        display: ['Satoshi', 'sans-serif']
+      }
+    }
   },
   plugins: []
 }
