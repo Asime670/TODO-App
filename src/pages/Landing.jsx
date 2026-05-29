@@ -27,14 +27,14 @@ const fadeUp = (delay) => ({
 
 export default function Landing() {
   return (
-    <div className="min-h-screen px-4 pb-12 pt-4 sm:px-6 lg:px-8">
+    <div className="font-outfit min-h-screen px-4 pb-12 pt-4 sm:px-6 lg:px-8">
       <nav className="sticky top-4 z-30 mx-auto max-w-6xl">
         <div className="glass-card flex flex-wrap items-center justify-between gap-4 rounded-full px-4 py-3 sm:px-5">
           <div>
-            <p className="font-sans text-[0.72rem] uppercase tracking-[0.35em] text-[var(--accent)]">
+            <p className="font-satoshi text-[0.72rem] uppercase tracking-[0.35em] text-[var(--accent)]">
               TaskFlow
             </p>
-            <p className="font-sans text-sm text-[var(--muted)]">Plan clearly. Ship confidently.</p>
+            <p className="font-outfit text-sm text-[var(--muted)]">Plan clearly. Ship confidently.</p>
           </div>
 
           <div className="flex items-center gap-2 sm:gap-3">
@@ -48,7 +48,7 @@ export default function Landing() {
         </div>
       </nav>
 
-      <main className="font-sans mx-auto flex max-w-6xl flex-col gap-8 pb-8 pt-6 sm:pt-8">
+      <main className="font-outfit mx-auto flex max-w-6xl flex-col gap-8 pb-8 pt-6 sm:pt-8">
         <section className="grid items-center gap-8 lg:grid-cols-[1.05fr_0.95fr]">
           <div>
             <motion.div
@@ -61,14 +61,14 @@ export default function Landing() {
 
             <motion.h1
               {...fadeUp(0.12)}
-              className="font-display mt-5 text-[clamp(2.8rem,5vw,4.3rem)] leading-[0.95]"
+              className="font-satoshi mt-5 text-[clamp(2.8rem,5vw,4.3rem)] font-bold leading-[0.95]"
             >
               Organize work with <span className="text-[var(--accent)]">clarity</span>.
             </motion.h1>
 
             <motion.p
               {...fadeUp(0.24)}
-              className="mt-4 max-w-2xl text-base font-light leading-7 text-[var(--muted)] sm:text-lg"
+              className="font-outfit mt-4 max-w-2xl text-base font-light leading-7 text-[var(--muted)] sm:text-lg"
             >
               TaskFlow gives you a calm space to capture priorities, keep deadlines visible, and move your projects from planning to completion without the noise.
             </motion.p>
@@ -89,8 +89,8 @@ export default function Landing() {
                 ['Instant sync', 'Local workspace updates']
               ].map(([title, body]) => (
                 <div key={title} className="rounded-2xl border border-[var(--glass-border)] bg-[var(--glass)] px-4 py-3">
-                  <p className="text-base font-semibold text-[var(--fg)]">{title}</p>
-                  <p className="mt-1 text-sm text-[var(--muted)]">{body}</p>
+                  <p className="font-satoshi text-base font-semibold text-[var(--fg)]">{title}</p>
+                  <p className="font-outfit mt-1 text-sm text-[var(--muted)]">{body}</p>
                 </div>
               ))}
             </motion.div>
@@ -99,8 +99,8 @@ export default function Landing() {
           <motion.div {...fadeUp(0.18)} className="glass-card rounded-[2rem] p-5 sm:p-6">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-sm uppercase tracking-[0.2em] text-[var(--muted)]">Live snapshot</p>
-                <h2 className="mt-2 text-2xl font-semibold text-[var(--fg)]">This week at a glance</h2>
+                <p className="font-outfit text-sm uppercase tracking-[0.2em] text-[var(--muted)]">Live snapshot</p>
+                <h2 className="font-satoshi mt-2 text-2xl font-semibold text-[var(--fg)]">This week at a glance</h2>
               </div>
               <span className="rounded-full border border-[var(--glass-border)] bg-[var(--glass)] px-3 py-1 text-xs text-[var(--accent)]">
                 Live
@@ -109,22 +109,22 @@ export default function Landing() {
 
             <div className="mt-5 grid gap-3 sm:grid-cols-2">
               <div className="rounded-[1.4rem] border border-[var(--glass-border)] bg-[rgba(8,15,22,0.4)] px-4 py-4">
-                <p className="text-sm text-[var(--muted)]">Total tasks</p>
-                <p className="mt-2 text-3xl font-semibold text-[var(--fg)]">24</p>
-                <p className="mt-2 text-sm text-[var(--muted)]">Across 3 priorities</p>
+                <p className="font-outfit text-sm text-[var(--muted)]">Total tasks</p>
+                <p className="font-satoshi mt-2 text-3xl font-semibold text-[var(--fg)]">24</p>
+                <p className="font-outfit mt-2 text-sm text-[var(--muted)]">Across 3 priorities</p>
               </div>
               <div className="rounded-[1.4rem] border border-[var(--glass-border)] bg-[rgba(8,15,22,0.4)] px-4 py-4">
-                <p className="text-sm text-[var(--muted)]">Due soon</p>
-                <p className="mt-2 text-3xl font-semibold text-[var(--fg)]">5</p>
-                <p className="mt-2 text-sm text-[var(--muted)]">Ready for action today</p>
+                <p className="font-outfit text-sm text-[var(--muted)]">Due soon</p>
+                <p className="font-satoshi mt-2 text-3xl font-semibold text-[var(--fg)]">5</p>
+                <p className="font-outfit mt-2 text-sm text-[var(--muted)]">Ready for action today</p>
               </div>
             </div>
 
             <div className="mt-4 rounded-[1.6rem] border border-[var(--glass-border)] bg-[rgba(6,12,17,0.65)] p-4">
               <div className="flex items-center justify-between gap-4 text-sm">
                 <div>
-                  <p className="text-[var(--muted)]">Completion</p>
-                  <p className="mt-1 font-semibold text-[var(--fg)]">72% of this week is covered</p>
+                  <p className="font-outfit text-[var(--muted)]">Completion</p>
+                  <p className="font-satoshi mt-1 font-semibold text-[var(--fg)]">72% of this week is covered</p>
                 </div>
                 <span className="rounded-full bg-[rgba(0,229,200,0.12)] px-3 py-1 text-xs text-[var(--accent)]">+12%</span>
               </div>
@@ -136,10 +136,10 @@ export default function Landing() {
 
               <div className="mt-4 flex items-center justify-between gap-3 rounded-[1.2rem] border border-[var(--glass-border)] bg-[rgba(255,255,255,0.02)] px-4 py-3">
                 <div>
-                  <p className="text-sm text-[var(--muted)]">Upcoming task</p>
-                  <p className="mt-1 font-semibold text-[var(--fg)]">Finalize demo launch checklist</p>
+                  <p className="font-outfit text-sm text-[var(--muted)]">Upcoming task</p>
+                  <p className="font-satoshi mt-1 font-semibold text-[var(--fg)]">Finalize demo launch checklist</p>
                 </div>
-                <span className="text-sm font-semibold text-[var(--accent)]">18m left</span>
+                <span className="font-satoshi text-sm font-semibold text-[var(--accent)]">18m left</span>
               </div>
             </div>
           </motion.div>
@@ -154,8 +154,8 @@ export default function Landing() {
                 className="feature-card"
               >
                 <div className="feature-icon">{feature.icon}</div>
-                <h2 className="mt-4 text-lg font-semibold text-[var(--fg)]">{feature.title}</h2>
-                <p className="mt-2 text-sm leading-6 text-[var(--muted)]">{feature.body}</p>
+                <h2 className="font-satoshi mt-4 text-lg font-semibold text-[var(--fg)]">{feature.title}</h2>
+                <p className="font-outfit mt-2 text-sm leading-6 text-[var(--muted)]">{feature.body}</p>
               </motion.article>
             ))}
           </div>

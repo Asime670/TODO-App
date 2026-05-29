@@ -27,42 +27,42 @@ export default function Login() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-4 py-12">
+    <div className="font-outfit flex min-h-screen items-center justify-center px-4 py-12">
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-md rounded-[2rem] border border-white/10 bg-white/10 p-6 backdrop-blur"
       >
-        <p className="text-sm text-cyan-200">Welcome back</p>
-        <h1 className="mt-2 text-3xl font-bold">Sign in to TaskFlow</h1>
-        <p className="mt-2 text-sm text-slate-200">Use your account to resume planning and tracking your work.</p>
+        <p className="font-outfit text-sm text-cyan-200">Welcome back</p>
+        <h1 className="font-satoshi mt-2 text-3xl font-bold">Sign in to TaskFlow</h1>
+        <p className="font-outfit mt-2 text-sm text-slate-200">Use your account to resume planning and tracking your work.</p>
 
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
           <div>
-            <label className="mb-1 block text-sm font-semibold">Email</label>
+            <label className="font-satoshi mb-1 block text-sm font-semibold">Email</label>
             <input
               type="email"
               required
               autoComplete="email"
               value={form.email}
               onChange={(event) => setForm({ ...form, email: event.target.value })}
-              className="w-full rounded-xl border border-white/10 bg-slate-950/40 px-3 py-2"
+              className="font-outfit w-full rounded-xl border border-white/10 bg-slate-950/40 px-3 py-2"
             />
           </div>
           <div>
-            <label className="mb-1 block text-sm font-semibold">Password</label>
+            <label className="font-satoshi mb-1 block text-sm font-semibold">Password</label>
             <input
               type="password"
               required
               autoComplete="current-password"
               value={form.password}
               onChange={(event) => setForm({ ...form, password: event.target.value })}
-              className="w-full rounded-xl border border-white/10 bg-slate-950/40 px-3 py-2"
+              className="font-outfit w-full rounded-xl border border-white/10 bg-slate-950/40 px-3 py-2"
             />
           </div>
 
           {error ? (
-            <p role="alert" className="rounded-xl border border-rose-400/40 bg-rose-500/10 px-3 py-2 text-sm text-rose-100">
+            <p role="alert" className="font-outfit rounded-xl border border-rose-400/40 bg-rose-500/10 px-3 py-2 text-sm text-rose-100">
               {error}
             </p>
           ) : null}
@@ -70,13 +70,13 @@ export default function Login() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-xl bg-cyan-500 px-4 py-3 font-semibold text-slate-950 disabled:cursor-not-allowed disabled:opacity-70"
+            className="font-satoshi w-full rounded-xl bg-cyan-500 px-4 py-3 font-semibold text-slate-950 disabled:cursor-not-allowed disabled:opacity-70"
           >
             {loading ? 'Signing in…' : 'Login'}
           </button>
         </form>
 
-        <p className="mt-4 text-sm text-slate-200">
+        <p className="font-outfit mt-4 text-sm text-slate-200">
           New here? <Link to="/register" className="text-cyan-200">Create an account</Link>
         </p>
       </motion.div>

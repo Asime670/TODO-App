@@ -191,38 +191,38 @@ export default function Dashboard() {
                   value={search}
                   onChange={(event) => setSearch(event.target.value)}
                   placeholder="Search tasks"
-                  className="rounded-lg border border-white/10 bg-slate-950/40 px-3 py-1.5 text-sm"
+                  className="font-outfit rounded-lg border border-white/10 bg-slate-950/40 px-3 py-1.5 text-sm"
                 />
-                <select value={priorityFilter} onChange={(event) => setPriorityFilter(event.target.value)} className="rounded-lg border border-white/10 bg-slate-950/40 px-3 py-1.5 text-sm">
+                <select value={priorityFilter} onChange={(event) => setPriorityFilter(event.target.value)} className="font-outfit rounded-lg border border-white/10 bg-slate-950/40 px-3 py-1.5 text-sm">
                   <option value="all">All priorities</option>
                   <option value="low">Low</option>
                   <option value="medium">Medium</option>
                   <option value="high">High</option>
                 </select>
-                <select value={categoryFilter} onChange={(event) => setCategoryFilter(event.target.value)} className="rounded-lg border border-white/10 bg-slate-950/40 px-3 py-1.5 text-sm">
+                <select value={categoryFilter} onChange={(event) => setCategoryFilter(event.target.value)} className="font-outfit rounded-lg border border-white/10 bg-slate-950/40 px-3 py-1.5 text-sm">
                   <option value="all">All categories</option>
                   {categories.map((category) => (
                     <option key={category} value={category}>{category}</option>
                   ))}
                 </select>
-                <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)} className="rounded-lg border border-white/10 bg-slate-950/40 px-3 py-1.5 text-sm">
+                <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)} className="font-outfit rounded-lg border border-white/10 bg-slate-950/40 px-3 py-1.5 text-sm">
                   <option value="all">All statuses</option>
                   <option value="completed">Completed</option>
                   <option value="pending">Pending</option>
                 </select>
               </div>
               <div className="flex gap-2">
-                <button onClick={() => setView('board')} className={`rounded-full px-3 py-1.5 text-sm ${view === 'board' ? 'bg-cyan-500 text-slate-950' : 'border border-white/10'}`}>Board</button>
-                <button onClick={() => setView('calendar')} className={`rounded-full px-3 py-1.5 text-sm ${view === 'calendar' ? 'bg-cyan-500 text-slate-950' : 'border border-white/10'}`}>Calendar</button>
+                <button onClick={() => setView('board')} className={`font-satoshi rounded-full px-3 py-1.5 text-sm font-semibold ${view === 'board' ? 'bg-cyan-500 text-slate-950' : 'border border-white/10'}`}>Board</button>
+                <button onClick={() => setView('calendar')} className={`font-satoshi rounded-full px-3 py-1.5 text-sm font-semibold ${view === 'calendar' ? 'bg-cyan-500 text-slate-950' : 'border border-white/10'}`}>Calendar</button>
               </div>
             </div>
 
-            {message && <p className="mt-4 rounded-xl bg-cyan-500/10 px-3 py-2 text-sm text-cyan-100">{message}</p>}
+            {message && <p className="font-outfit mt-4 rounded-xl bg-cyan-500/10 px-3 py-2 text-sm text-cyan-100">{message}</p>}
 
             {view === 'calendar' ? (
               <div className="mt-6 grid gap-3 md:grid-cols-7">
                 {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => (
-                  <div key={day} className="text-center text-sm font-semibold text-cyan-100">{day}</div>
+                  <div key={day} className="font-satoshi text-center text-sm font-semibold text-cyan-100">{day}</div>
                 ))}
                 {calendarDays.map((day, index) => {
                   const dayTasks = day ? filteredTasks.filter((task) => new Date(task.deadline).toDateString() === day.toDateString()) : []
@@ -230,10 +230,10 @@ export default function Dashboard() {
                     <div key={index} className="min-h-28 rounded-2xl border border-white/10 bg-slate-950/30 p-2">
                       {day && (
                         <>
-                          <p className="text-sm font-semibold">{day.getDate()}</p>
+                          <p className="font-satoshi text-sm font-semibold">{day.getDate()}</p>
                           <div className="mt-2 space-y-1">
                             {dayTasks.slice(0, 3).map((task) => (
-                              <p key={task._id} className="truncate rounded bg-white/5 px-2 py-1 text-[11px]">{task.title}</p>
+                              <p key={task._id} className="font-outfit truncate rounded bg-white/5 px-2 py-1 text-[11px]">{task.title}</p>
                             ))}
                           </div>
                         </>
@@ -254,7 +254,7 @@ export default function Dashboard() {
                     onOpen={(selected) => navigate(`/tasks/${selected._id}`)}
                   />
                 ))}
-                {!filteredTasks.length && <div className="rounded-2xl border border-dashed border-white/10 p-8 text-slate-200">No tasks yet. Create your first task to get started.</div>}
+                {!filteredTasks.length && <div className="font-outfit rounded-2xl border border-dashed border-white/10 p-8 text-slate-200">No tasks yet. Create your first task to get started.</div>}
               </div>
             )}
           </div>
@@ -264,8 +264,8 @@ export default function Dashboard() {
       {showCreate && (
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-slate-950/70 px-4">
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-2xl rounded-2xl border border-white/10 bg-slate-950 p-5">
-            <h2 className="text-xl font-bold">Create a new task</h2>
-            <p className="mt-1 text-xs text-slate-200">Add the details and set the deadline to start tracking it.</p>
+            <h2 className="font-satoshi text-xl font-semibold">Create a new task</h2>
+            <p className="font-outfit mt-1 text-xs text-slate-200">Add the details and set the deadline to start tracking it.</p>
             <div className="mt-3">
               <TaskForm
                 onSubmit={handleCreate}
@@ -280,12 +280,12 @@ export default function Dashboard() {
       {alarmOpen && alarmTask && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 px-4">
           <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-lg rounded-2xl border border-rose-400/40 bg-slate-950 p-5">
-            <p className="text-xs text-rose-200">Deadline reached</p>
-            <h2 className="mt-1 text-xl font-bold">{alarmTask.title}</h2>
-            <p className="mt-2 text-xs text-slate-200">This task is now overdue. Open it to review, update, or complete it.</p>
+            <p className="font-outfit text-xs text-rose-200">Deadline reached</p>
+            <h2 className="font-satoshi mt-1 text-xl font-semibold">{alarmTask.title}</h2>
+            <p className="font-outfit mt-2 text-xs text-slate-200">This task is now overdue. Open it to review, update, or complete it.</p>
             <div className="mt-4 flex gap-2">
-              <button onClick={() => { setAlarmOpen(false); navigate(`/tasks/${alarmTask._id}`) }} className="rounded-full bg-rose-500 px-3 py-1.5 text-sm font-semibold text-white">View task</button>
-              <button onClick={() => setAlarmOpen(false)} className="rounded-full border border-white/10 px-3 py-1.5 text-sm">Dismiss</button>
+              <button onClick={() => { setAlarmOpen(false); navigate(`/tasks/${alarmTask._id}`) }} className="font-satoshi rounded-full bg-rose-500 px-3 py-1.5 text-sm font-semibold text-white">View task</button>
+              <button onClick={() => setAlarmOpen(false)} className="font-outfit rounded-full border border-white/10 px-3 py-1.5 text-sm">Dismiss</button>
             </div>
           </motion.div>
         </div>
