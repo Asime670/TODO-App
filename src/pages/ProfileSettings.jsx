@@ -7,12 +7,12 @@ export default function ProfileSettings() {
   const navigate = useNavigate()
   const { user, updateProfile } = useAuth()
   const { setTheme } = useTheme()
-  const [form, setForm] = useState({ name: '', email: '', password: '', theme: user?.theme || 'dark' })
+  const [form, setForm] = useState({ fullname: '', email: ''  })
   const [message, setMessage] = useState('')
 
   useEffect(() => {
     if (user) {
-      setForm((current) => ({ ...current, name: user.name, email: user.email, theme: user.theme || 'dark' }))
+      setForm((current) => ({ ...current, fullname: user.fullname, email: user.email, theme: user.theme || 'dark' }))
     }
   }, [user])
 
@@ -21,14 +21,26 @@ export default function ProfileSettings() {
     setMessage('')
 
     try {
-      const payload = { name: form.name, email: form.email, theme: form.theme }
-      if (form.password) {
-        payload.password = form.password
+      const payload = { fullname: form.fullname, email: form.email}
+ 
+      const res  = await fetch('https://agrofarms.cloud/api/auth/profile', {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem('token')}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        throw new Error(data.message || 'Failed to update profile')
       }
 
-      await updateProfile(payload)
       setTheme(form.theme)
       setMessage('Profile updated successfully')
+      location.href = '/dashboard'
     } catch (error) {
       setMessage(error?.message || 'Unable to update profile')
     }
@@ -44,23 +56,14 @@ export default function ProfileSettings() {
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
           <div>
             <label className="font-satoshi mb-1 block text-sm font-semibold">Name</label>
-            <input value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} className="font-outfit w-full rounded-xl border border-white/10 bg-slate-950/40 px-3 py-2" />
+            <input value={form.fullname} onChange={(event) => setForm({ ...form, fullname: event.target.value })} className="font-outfit w-full rounded-xl border border-white/10 bg-slate-950/40 px-3 py-2" />
           </div>
           <div>
             <label className="font-satoshi mb-1 block text-sm font-semibold">Email</label>
             <input type="email" value={form.email} onChange={(event) => setForm({ ...form, email: event.target.value })} className="font-outfit w-full rounded-xl border border-white/10 bg-slate-950/40 px-3 py-2" />
           </div>
-          <div>
-            <label className="font-satoshi mb-1 block text-sm font-semibold">New password</label>
-            <input type="password" value={form.password} onChange={(event) => setForm({ ...form, password: event.target.value })} className="font-outfit w-full rounded-xl border border-white/10 bg-slate-950/40 px-3 py-2" placeholder="Leave blank to keep current password" />
-          </div>
-          <div>
-            <label className="font-satoshi mb-1 block text-sm font-semibold">Theme</label>
-            <select value={form.theme} onChange={(event) => setForm({ ...form, theme: event.target.value })} className="font-outfit w-full rounded-xl border border-white/10 bg-slate-950/40 px-3 py-2">
-              <option value="dark">Dark</option>
-              <option value="light">Light</option>
-            </select>
-          </div>
+          
+        
 
           {message && <p className="font-outfit rounded-xl bg-cyan-500/10 px-3 py-2 text-sm text-cyan-100">{message}</p>}
 

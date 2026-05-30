@@ -2,11 +2,12 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { useAuth } from '../contexts/AuthContext'
+import { baseUrl } from '../lib/url'
 
 export default function Register() {
   const navigate = useNavigate()
   const { register, loading } = useAuth()
-  const [form, setForm] = useState({ name: '', email: '', password: '' })
+  const [form, setForm] = useState({ fullname: '', email: '', password: '' , device: 'web' })
   const [error, setError] = useState('')
 
   const handleSubmit = async (event) => {
@@ -16,8 +17,21 @@ export default function Register() {
     console.info('[UI] Register form submitted', { email: form.email })
 
     try {
-      await register(form)
-      console.info('[UI] Register success, redirecting to dashboard', { email: form.email })
+      const res = await fetch(`${baseUrl}/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form)
+      })
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(`Error ${data.status}: ${data.message}`)
+      }
+
+      sessionStorage.setItem('token', data.data.token)
+
+
+
       navigate('/dashboard')
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unable to create an account. Please try again.'
@@ -43,9 +57,9 @@ export default function Register() {
             <input
               type="text"
               required
-              autoComplete="name"
-              value={form.name}
-              onChange={(event) => setForm({ ...form, name: event.target.value })}
+              autoComplete="fullname"
+              value={form.fullname}
+              onChange={(event) => setForm({ ...form, fullname: event.target.value })}
               className="font-outfit w-full rounded-xl border border-white/10 bg-slate-950/40 px-3 py-2"
             />
           </div>

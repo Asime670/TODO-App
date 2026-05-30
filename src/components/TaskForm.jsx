@@ -38,9 +38,9 @@ export default function TaskForm({ initialData = null, onSubmit, submitLabel = '
   }, [
     initialData?.title,
     initialData?.description,
-    initialData?.priority,
-    initialData?.category,
-    initialData?.deadline
+
+    initialData?.task_date,
+    initialData?.task_time,
   ])
 
   const handleSubmit = (event) => {
@@ -71,36 +71,27 @@ export default function TaskForm({ initialData = null, onSubmit, submitLabel = '
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-        <div>
-          <label className="font-satoshi block text-sm font-semibold mb-1">Priority</label>
-          <select
-            value={form.priority}
-            onChange={(event) => setForm({ ...form, priority: event.target.value })}
-            className="font-outfit w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm"
-          >
-            <option value="low">Low</option>
-            <option value="medium">Medium</option>
-            <option value="high">High</option>
-          </select>
-        </div>
+ 
+
 
         <div>
-          <label className="font-satoshi block text-sm font-semibold mb-1">Category</label>
+          <label className="font-satoshi block text-sm font-semibold mb-1">Date</label>
           <input
             required
-            value={form.category}
-            onChange={(event) => setForm({ ...form, category: event.target.value })}
+            type="date"
+            value={form.task_date}
+            onChange={(event) => setForm({ ...form, task_date: event.target.value })}
             className="font-outfit w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm"
           />
         </div>
 
         <div>
-          <label className="font-satoshi block text-sm font-semibold mb-1">Deadline</label>
+          <label className="font-satoshi block text-sm font-semibold mb-1">Time</label>
           <input
             required
-            type="datetime-local"
-            value={form.deadline}
-            onChange={(event) => setForm({ ...form, deadline: event.target.value })}
+            type="time"
+            value={form.task_time}
+            onChange={(event) => setForm({ ...form, task_time: event.target.value })}
             className="font-outfit w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm"
           />
         </div>

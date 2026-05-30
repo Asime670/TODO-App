@@ -1,0 +1,1 @@
+export const baseUrl = 'https://agrofarms.cloud/api';

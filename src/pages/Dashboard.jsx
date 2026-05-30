@@ -3,7 +3,6 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import TaskCard from '../components/TaskCard'
 import TaskForm from '../components/TaskForm'
-import { addTask, deleteStoredTask, getTasks, saveTasks, updateStoredTask } from '../lib/taskStorage'
 import { useAuth } from '../contexts/AuthContext'
 
 const statCards = [
@@ -32,8 +31,8 @@ function buildCalendarDays(referenceDate) {
 
 export default function Dashboard() {
   const navigate = useNavigate()
-  const { user, logout } = useAuth()
-  const [tasks, setTasks] = useState(() => getTasks())
+  const { user} = useAuth()
+  const [tasks, setTasks] = useState([])
   const [search, setSearch] = useState('')
   const [priorityFilter, setPriorityFilter] = useState('all')
   const [categoryFilter, setCategoryFilter] = useState('all')
@@ -45,10 +44,7 @@ export default function Dashboard() {
   const [alarmOpen, setAlarmOpen] = useState(false)
   const [message, setMessage] = useState('')
   const triggeredAlarms = useRef(new Set())
-
-  useEffect(() => {
-    saveTasks(tasks)
-  }, [tasks])
+  const [sidebarOpen, setSidebarOpen] = useState(false)
 
   useEffect(() => {
     const interval = window.setInterval(() => setNow(Date.now()), 1000)
@@ -58,12 +54,14 @@ export default function Dashboard() {
   useEffect(() => {
     tasks.forEach((task) => {
       const deadline = new Date(task.deadline).getTime()
-      if (task.completed || deadline > now) {
-        return
-      }
-
-      if (!triggeredAlarms.current.has(task._id)) {
-        triggeredAlarms.current.add(task._id)
+     if (
+  task.status === 'completed' ||
+  deadline > now
+) {
+  return
+}
+if (!triggeredAlarms.current.has(task.id)) {
+  triggeredAlarms.current.add(task.id)
         setAlarmTask(task)
         setAlarmOpen(true)
 
@@ -90,84 +88,245 @@ export default function Dashboard() {
     })
   }, [tasks, now])
 
-  const categories = useMemo(() => ['all', ...new Set(tasks.map((task) => task.category))], [tasks])
+  useEffect(() => {
+  const fetchTasks = async () => {
+    try {
+      const token = sessionStorage.getItem('token')
 
-  const filteredTasks = useMemo(() => {
-    return tasks.filter((task) => {
-      const matchesSearch = `${task.title} ${task.description}`.toLowerCase().includes(search.toLowerCase())
-      const matchesPriority = priorityFilter === 'all' || task.priority === priorityFilter
-      const matchesCategory = categoryFilter === 'all' || task.category === categoryFilter
-      const matchesStatus = statusFilter === 'all' || (statusFilter === 'completed' ? task.completed : !task.completed)
+      const response = await fetch(
+        'https://agrofarms.cloud/api/tasks',
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      )
 
-      return matchesSearch && matchesPriority && matchesCategory && matchesStatus
-    })
-  }, [tasks, search, priorityFilter, categoryFilter, statusFilter])
+      const result = await response.json()
 
-  const stats = useMemo(() => {
-    const total = tasks.length
-    const completed = tasks.filter((task) => task.completed).length
-    const pending = total - completed
-    const overdue = tasks.filter((task) => !task.completed && new Date(task.deadline).getTime() < now).length
+      console.log(result)
 
-    return { total, completed, pending, overdue }
-  }, [tasks, now])
+      setTasks(Array.isArray(result.data) ? result.data : [])
+    } catch (error) {
+      console.error(error)
+      setTasks([])
+    }
+  }
+
+  fetchTasks()
+}, [])
+
+  const categories = ['all']
+
+ const stats = useMemo(() => {
+  const total = tasks.length
+
+  const completed = tasks.filter(
+    (task) => task.status === 'completed'
+  ).length
+
+  const pending = tasks.filter(
+    (task) => task.status === 'pending'
+  ).length
+
+  const overdue = tasks.filter(
+    (task) =>
+      task.status !== 'completed' &&
+      new Date(task.deadline).getTime() < now
+  ).length
+
+  return {
+    total,
+    completed,
+    pending,
+    overdue
+  }
+}, [tasks, now])
+
+const filteredTasks = useMemo(() => {
+  return tasks.filter((task) => {
+    const matchesSearch =
+      task.title?.toLowerCase().includes(search.toLowerCase())
+
+    const matchesPriority =
+      priorityFilter === 'all' ||
+      task.priority === priorityFilter
+
+    const matchesCategory =
+      categoryFilter === 'all' ||
+      task.category === categoryFilter
+
+    const matchesStatus =
+      statusFilter === 'all' ||
+      task.status === statusFilter
+
+    return (
+      matchesSearch &&
+      matchesPriority &&
+      matchesCategory &&
+      matchesStatus
+    )
+  })
+}, [
+  tasks,
+  search,
+  priorityFilter,
+  categoryFilter,
+  statusFilter
+])
 
   const calendarDays = useMemo(() => buildCalendarDays(new Date()), [])
 
-  const handleCreate = (payload) => {
-    addTask(payload)
-    setTasks(getTasks())
-    setShowCreate(false)
-    setMessage('Task created successfully')
+const handleCreate = async (payload) => {
+  try {
+    const token = sessionStorage.getItem('token')
+
+    const response = await fetch(
+      'https://agrofarms.cloud/api/tasks',
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      }
+    )
+
+    const result = await response.json()
+
+    if (result.success) {
+      setTasks((prev) => [result.data, ...prev])
+      setShowCreate(false)
+      setMessage('Task created successfully')
+    }
+  } catch (error) {
+    console.error(error)
   }
+}
 
   const handleToggle = (task) => {
-    updateStoredTask(task._id, { completed: !task.completed })
+    updateStoredTask(task.id, { completed: !task.completed })
     setTasks(getTasks())
   }
 
-  const handleDelete = (task) => {
-    deleteStoredTask(task._id)
-    setTasks(getTasks())
+  const handleDelete = async (task) => {
+    try {
+      const token = sessionStorage.getItem('token')
+
+      await fetch(
+        `https://agrofarms.cloud/api/tasks/${task.id}`,
+        {
+          method: 'DELETE',
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      )
+
+      location.reload()
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   const handleLogout = async () => {
-    await logout()
+    await sessionStorage.removeItem('token')
     navigate('/')
   }
 
   return (
     <div className="font-outfit min-h-screen px-4 py-6 text-slate-50 lg:px-8">
       <div className="mx-auto flex max-w-7xl gap-4">
-        <aside className="hidden w-48 shrink-0 lg:block">
-          <div className="sticky top-6 flex flex-col gap-3">
-            <div>
-              <p className="font-outfit text-xs text-cyan-200">TaskFlow</p>
-              <h1 className="font-satoshi mt-1 text-xl font-semibold">Dashboard</h1>
-              <p className="font-outfit mt-1 text-xs text-slate-200">Welcome back, {user?.name || 'there'}.</p>
-            </div>
+        <aside
+  className={`
+    fixed inset-y-0 left-0 z-50 w-64 transform bg-slate-950 p-4 transition-transform duration-300 lg:static lg:translate-x-0 lg:block
+    ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+  `}
+>
+  {/* Close button (mobile only) */}
+  <div className="mb-4 flex justify-between lg:hidden">
+    <p className="font-satoshi text-sm font-semibold">Menu</p>
+    <button
+      onClick={() => setSidebarOpen(false)}
+      className="text-white"
+    >
+      ✕
+    </button>
+  </div>
 
-            <div className="grid gap-2">
-              <button onClick={() => setView('board')} className="font-satoshi rounded-lg bg-cyan-500 px-3 py-2 text-left text-sm font-semibold text-slate-950">Overview</button>
-              <button onClick={() => setView('calendar')} className="font-outfit rounded-lg border border-white/10 px-3 py-2 text-left text-sm">Calendar</button>
-              <button onClick={() => navigate('/profile')} className="font-outfit rounded-lg border border-white/10 px-3 py-2 text-left text-sm">Profile</button>
-              <button onClick={handleLogout} className="font-outfit rounded-lg border border-rose-400/50 px-3 py-2 text-left text-sm text-rose-100">Logout</button>
-            </div>
+  <div className="sticky top-6 flex flex-col gap-3">
+    <div>
+      <p className="font-outfit text-xs text-cyan-200">TaskFlow</p>
+      <h1 className="font-satoshi mt-1 text-xl font-semibold">Dashboard</h1>
+      <p className="font-outfit mt-1 text-xs text-slate-200">
+        Welcome back, {user?.fullname || 'there'}.
+      </p>
+    </div>
 
-            <div className="border-t border-white/10 pt-3">
-              <p className="font-outfit text-xs text-slate-200">Current focus</p>
-              <p className="font-satoshi mt-1 text-base font-semibold">{stats.pending} pending tasks</p>
-              <p className="font-outfit mt-0.5 text-xs text-slate-200">{stats.overdue} overdue items.</p>
-            </div>
-          </div>
-        </aside>
+    <div className="grid gap-2">
+      <button
+        onClick={() => {
+          setView('board')
+          setSidebarOpen(false)
+        }}
+        className="rounded-lg bg-cyan-500 px-3 py-2 text-left text-sm font-semibold text-slate-950"
+      >
+        Overview
+      </button>
 
-        <main className="flex-1 space-y-4">
+      <button
+        onClick={() => {
+          setView('calendar')
+          setSidebarOpen(false)
+        }}
+        className="rounded-lg border border-white/10 px-3 py-2 text-left text-sm"
+      >
+        Calendar
+      </button>
+
+      <button
+        onClick={() => {
+          navigate('/profile')
+          setSidebarOpen(false)
+        }}
+        className="rounded-lg border border-white/10 px-3 py-2 text-left text-sm"
+      >
+        Profile
+      </button>
+
+      <button
+        onClick={handleLogout}
+        className="rounded-lg border border-rose-400/50 px-3 py-2 text-left text-sm text-rose-100"
+      >
+        Logout
+      </button>
+    </div>
+
+    <div className="border-t border-white/10 pt-3">
+      <p className="text-xs text-slate-200">Current focus</p>
+      <p className="mt-1 text-base font-semibold">
+        {stats.pending} pending tasks
+      </p>
+      <p className="mt-0.5 text-xs text-slate-200">
+        {stats.overdue} overdue items.
+      </p>
+    </div>
+  </div>
+</aside>
+
+        <main className="flex-1 space-y-4"><button
+  onClick={() => setSidebarOpen(true)}
+  className="mb-3 rounded-lg border border-white/10 bg-slate-950/40 px-3 py-2 text-sm text-white lg:hidden"
+>
+  ☰ Menu
+</button>
           <div className="rounded-2xl border border-white/10 bg-white/10 p-4 backdrop-blur">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <p className="font-outfit text-xs text-cyan-200">Focus dashboard</p>
-                <h2 className="font-satoshi text-2xl font-semibold">Stay ahead of every deadline</h2>
+                <h2 className="font-satoshi text-2xl font-semibold">Stay ahead of every task_date</h2>
               </div>
               <button onClick={() => setShowCreate(true)} className="font-satoshi rounded-full bg-cyan-500 px-3 py-1.5 text-sm font-semibold text-slate-950">
                 + New task
@@ -225,7 +384,13 @@ export default function Dashboard() {
                   <div key={day} className="font-satoshi text-center text-sm font-semibold text-cyan-100">{day}</div>
                 ))}
                 {calendarDays.map((day, index) => {
-                  const dayTasks = day ? filteredTasks.filter((task) => new Date(task.deadline).toDateString() === day.toDateString()) : []
+                 const dayTasks = day
+  ? filteredTasks.filter(
+      (task) =>
+        new Date(task.task_date).toDateString() ===
+        day.toDateString()
+    )
+  : []
                   return (
                     <div key={index} className="min-h-28 rounded-2xl border border-white/10 bg-slate-950/30 p-2">
                       {day && (
@@ -233,7 +398,7 @@ export default function Dashboard() {
                           <p className="font-satoshi text-sm font-semibold">{day.getDate()}</p>
                           <div className="mt-2 space-y-1">
                             {dayTasks.slice(0, 3).map((task) => (
-                              <p key={task._id} className="font-outfit truncate rounded bg-white/5 px-2 py-1 text-[11px]">{task.title}</p>
+                              <p key={task.id} className="font-outfit truncate rounded bg-white/5 px-2 py-1 text-[11px]">{task.title}</p>
                             ))}
                           </div>
                         </>
@@ -244,17 +409,23 @@ export default function Dashboard() {
               </div>
             ) : (
               <div className="mt-6 grid gap-4 xl:grid-cols-2">
-                {filteredTasks.map((task) => (
-                  <TaskCard
-                    key={task._id}
-                    task={task}
-                    now={now}
-                    onToggle={handleToggle}
-                    onDelete={handleDelete}
-                    onOpen={(selected) => navigate(`/tasks/${selected._id}`)}
-                  />
-                ))}
-                {!filteredTasks.length && <div className="font-outfit rounded-2xl border border-dashed border-white/10 p-8 text-slate-200">No tasks yet. Create your first task to get started.</div>}
+                {filteredTasks.length === 0 ? (
+                  <div className="col-span-full rounded-2xl border border-dashed border-white/10 bg-slate-950/30 p-8 text-center text-slate-300">
+                    <p className="font-satoshi text-lg font-semibold">No tasks yet.</p>
+                    <p className="font-outfit mt-2 text-sm text-slate-400">Create your first task to see it appear here.</p>
+                  </div>
+                ) : (
+                  filteredTasks.map((task) => (
+                    <TaskCard
+                      key={task.id}
+                      task={task}
+                      now={now}
+                      onToggle={handleToggle}
+                      onDelete={handleDelete}
+                      onOpen={(selected) => navigate(`/tasks/${selected.id}`)}
+                    />
+                  ))
+                )}
               </div>
             )}
           </div>
@@ -265,7 +436,7 @@ export default function Dashboard() {
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-slate-950/70 px-4">
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-2xl rounded-2xl border border-white/10 bg-slate-950 p-5">
             <h2 className="font-satoshi text-xl font-semibold">Create a new task</h2>
-            <p className="font-outfit mt-1 text-xs text-slate-200">Add the details and set the deadline to start tracking it.</p>
+            <p className="font-outfit mt-1 text-xs text-slate-200">Add the details and set the task_date to start tracking it.</p>
             <div className="mt-3">
               <TaskForm
                 onSubmit={handleCreate}
@@ -280,11 +451,11 @@ export default function Dashboard() {
       {alarmOpen && alarmTask && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 px-4">
           <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-lg rounded-2xl border border-rose-400/40 bg-slate-950 p-5">
-            <p className="font-outfit text-xs text-rose-200">Deadline reached</p>
+            <p className="font-outfit text-xs text-rose-200">task_date reached</p>
             <h2 className="font-satoshi mt-1 text-xl font-semibold">{alarmTask.title}</h2>
             <p className="font-outfit mt-2 text-xs text-slate-200">This task is now overdue. Open it to review, update, or complete it.</p>
             <div className="mt-4 flex gap-2">
-              <button onClick={() => { setAlarmOpen(false); navigate(`/tasks/${alarmTask._id}`) }} className="font-satoshi rounded-full bg-rose-500 px-3 py-1.5 text-sm font-semibold text-white">View task</button>
+              <button onClick={() => { setAlarmOpen(false); navigate(`/tasks/${alarmTask.id}`) }} className="font-satoshi rounded-full bg-rose-500 px-3 py-1.5 text-sm font-semibold text-white">View task</button>
               <button onClick={() => setAlarmOpen(false)} className="font-outfit rounded-full border border-white/10 px-3 py-1.5 text-sm">Dismiss</button>
             </div>
           </motion.div>

@@ -2,21 +2,37 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { useAuth } from '../contexts/AuthContext'
+import { baseUrl } from '../lib/url'
 
 export default function Login() {
   const navigate = useNavigate()
-  const { login, loading } = useAuth()
+  const { login } = useAuth()
   const [form, setForm] = useState({ email: '', password: '' })
   const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (event) => {
     event.preventDefault()
     setError('')
+    setLoading(true)
 
     console.info('[UI] Login form submitted', { email: form.email })
 
     try {
-      await login(form)
+    
+      const res = await fetch(`${baseUrl}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...form })
+      });
+
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(`Error ${data.status}: ${data.message}`)
+      }
+      sessionStorage.setItem('token', data.data.token)
+
       console.info('[UI] Login success, redirecting to dashboard', { email: form.email })
       navigate('/dashboard')
     } catch (error) {
